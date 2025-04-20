@@ -1,0 +1,154 @@
+body {
+  background-color: #121213;
+  color: white;
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #121213;
+  padding: 15px 20px;
+  border-bottom: 1px solid #3a3a3c;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  text-align: center;
+  line-height: 1;
+}
+
+.left-section,
+.right-section {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.left-section {
+  position: absolute;
+  left: 20px;
+}
+
+.right-section {
+  position: absolute;
+  right: 20px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.icon-button:hover {
+  transform: scale(1.2);
+}
+
+#game-board {
+  display: grid;
+  gap: 5px;
+  padding-top: 50px;
+}
+.row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+
+.tile {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #3a3a3c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: #121213;
+  color: white;
+  transition: transform 0.3s ease-in-out;
+}
+
+.flip {
+  animation: flip 0.5s ease forwards;
+}
+
+@keyframes flip {
+  0%   { transform: rotateX(0deg); }
+  49%  { transform: rotateX(90deg); background-color: #121213; }
+  50%  { transform: rotateX(90deg); }
+  100% { transform: rotateX(0deg); }
+}
+
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.pop {
+  animation: pop 100ms ease;
+}
+
+.correct {
+  background-color: #538d4e;
+  border-color: #538d4e;
+}
+
+.present {
+  background-color: #b59f3b;
+  border-color: #b59f3b;
+}
+
+.absent {
+  background-color: #3a3a3c;
+  border-color: #3a3a3c;
+}
+
+#message-container {
+  margin-top: 20px;
+  font-size: 1.5rem;
+}
+
+.footer {
+  margin-top: auto;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #888;
+  width: 100%;
+}
+
+.footer a {
+  color: #888;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}

@@ -115,6 +115,19 @@ body {
   animation: pop 100ms ease;
 }
 
+@keyframes shake {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-5px); }
+  40%  { transform: translateX(5px); }
+  60%  { transform: translateX(-5px); }
+  80%  { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 400ms ease;
+}
+
 .correct {
   background-color: #538d4e;
   border-color: #538d4e;
@@ -131,8 +144,99 @@ body {
 }
 
 #message-container {
-  margin-top: 20px;
-  font-size: 1.5rem;
+  position: absolute;
+  top: 525px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  background-color: #1e1e1f;
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: white;
+  font-size: 1.1rem;
+  text-align: center;
+  pointer-events: none;
+  max-width: 400px;
+  width: fit-content;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 10;
+}
+
+#message-container.show {
+  opacity: 1;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background-color: #1e1e1f;
+  padding: 30px 30px 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-content h2 {
+  margin: 0 0 15px 0;
+}
+
+.modal-content input {
+  padding: 10px;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 12px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background-color: #2a2a2b;
+  color: white;
+  text-align: center;
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  background-color: #538d4e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.modal-content button:hover {
+  background-color: #446e3d;
+}
+
+.error-message {
+  margin-top: 10px;
+  color: #ff4f4f;
+  font-size: 0.95rem;
 }
 
 .footer {

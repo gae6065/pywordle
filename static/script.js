@@ -1,4 +1,4 @@
-const DEBUG_MODE = true; // ← Set to false for normal mode
+const DEBUG_MODE = false; // ← Set to false for normal mode
 let word = '';
 let currentGuess = '';
 let currentRow = 0;
@@ -6,17 +6,19 @@ const maxRows = 6;
 
 document.addEventListener("DOMContentLoaded", () => {
     createBoard();
-
+  
     if (DEBUG_MODE) {
-        chooseDebugWord();
+      // Don't add keydown listener yet
+      chooseDebugWord();
     } else {
-        fetch("https://random-word-api.herokuapp.com/word?length=5")
-            .then(res => res.json())
-            .then(data => word = data[0].toLowerCase());
+      fetch("https://random-word-api.herokuapp.com/word?length=5")
+        .then(res => res.json())
+        .then(data => word = data[0].toLowerCase());
+  
+      // Only safe to enable board input in non-debug mode
+      document.addEventListener("keydown", handleKeyPress);
     }
-
-    document.addEventListener("keydown", handleKeyPress);
-});
+  });  
 
 function createBoard() {
     const board = document.getElementById("game-board");
@@ -42,8 +44,13 @@ function handleKeyPress(e) {
         validateGuess(currentGuess).then(isValid => {
             if (!isValid) {
                 showMessage("Not in dictionary!");
+              
+                // Trigger shake on the current row
+                row.classList.add("shake");
+                setTimeout(() => row.classList.remove("shake"), 400);
+              
                 return;
-            }
+              }              
 
             const target = word.split("");
             const guess = currentGuess.split("");
@@ -115,27 +122,61 @@ function handleKeyPress(e) {
 }
 
 function chooseDebugWord() {
-    let attempts = 0;
-    while (attempts < 3) {
-        const input = prompt("Enter your secret 5-letter word:").toLowerCase();
-        if (input.length !== 5) {
-            alert("Word must be exactly 5 letters.");
-            attempts++;
-            continue;
+    const modal = document.getElementById("debug-modal");
+    const input = document.getElementById("debug-input");
+    const button = document.getElementById("debug-submit");
+    const error = document.getElementById("debug-error");
+    const gameSection = document.getElementById("game-section");
+  
+    // Show modal and disable background
+    modal.classList.add("show");
+    input.focus();
+    error.textContent = "";
+    document.removeEventListener("keydown", handleKeyPress);
+    gameSection?.setAttribute("aria-hidden", "true");
+  
+    function submitDebugWord() {
+      const value = input.value.trim().toLowerCase();
+      error.textContent = "";
+  
+      if (value.length !== 5) {
+        error.textContent = "Word must be exactly 5 letters.";
+        input.focus();
+        return;
+      }
+  
+      validateGuess(value).then(valid => {
+        if (valid) {
+          word = value;
+          modal.classList.remove("show");
+          document.addEventListener("keydown", handleKeyPress);
+          gameSection?.removeAttribute("aria-hidden");
+  
+          // Remove input listener after valid submission
+          input.removeEventListener("keydown", enterListener);
+        } else {
+          error.textContent = "That word isn't valid. Try again.";
+          input.focus();
         }
-
-        validateGuess(input).then(valid => {
-            if (valid) {
-                word = input;
-                alert("Debug word accepted.");
-            } else {
-                alert("That word isn't valid. Try again.");
-                chooseDebugWord(); // re-prompt
-            }
-        });
-        break;
+      });
     }
-}
+  
+    // Submit on button click
+    button.onclick = submitDebugWord;
+  
+    // Prevent stacking: define a reusable listener and remove it on success
+    function enterListener(e) {
+      if (e.key === "Enter") {
+        submitDebugWord();
+      }
+    }
+  
+    // Add only once
+    input.removeEventListener("keydown", enterListener);
+    input.addEventListener("keydown", enterListener, { once: false });
+  }
+  
+  
 
 if (!DEBUG_MODE) {
     console.log("Secret word:", word);
@@ -143,8 +184,21 @@ if (!DEBUG_MODE) {
 
 function showMessage(msg) {
     const msgContainer = document.getElementById("message-container");
+    
     msgContainer.textContent = msg;
-}
+    msgContainer.classList.remove("show"); // reset if already showing
+  
+    // Trigger reflow so the fade works again if message repeats
+    void msgContainer.offsetWidth;
+  
+    msgContainer.classList.add("show");
+  
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+      msgContainer.classList.remove("show");
+    }, 3000);
+  }
+  
 
 function validateGuess(word) {
     return fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
